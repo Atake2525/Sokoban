@@ -12,11 +12,7 @@ public class Move : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    private void Start()
-    {
-        // 目的地・出発地を現在地で初期化
-        destination
-    }
+
 
 
 

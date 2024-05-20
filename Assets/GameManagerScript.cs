@@ -26,7 +26,7 @@ public class GameManagerScript : MonoBehaviour
     Vector2Int GetPlayerIndex()
     {
         for (int y = 0; y < field.GetLength(0); y++){
-            for (int x = 0; x< field.GetLength(1); x++){
+            for (int x = 0; x < field.GetLength(1); x++){
                 if (field[y, x] == null) { continue; }
                 if (field[y, x].tag == "Player") { return new Vector2Int(x, y); }
             }
@@ -76,9 +76,8 @@ public class GameManagerScript : MonoBehaviour
     }
 
     // moveFromおよびmoveToをVector2Int型で受け取る
-    bool MoveNumber(string tag, Vector2Int moveFrom, Vector2Int moveTo)
+    bool MoveNumber(Vector2Int moveFrom, Vector2Int moveTo)
     {
-        playerPrefab.GetComponent<GameObject>();
 
         //移動先が範囲外なら移動不可
         if (moveTo.y < 0 || moveTo.y >= field.GetLength(0)) { return false; }
@@ -86,27 +85,31 @@ public class GameManagerScript : MonoBehaviour
         //Boxタグを持っていたら再帰処理
         if (field[moveTo.y, moveTo.x] != null && field[moveTo.y, moveTo.x].tag == "Box"){
             Vector2Int velocity = moveTo - moveFrom;
-            bool success = MoveNumber(moveTo, moveTo + velocity);
+            bool success = MoveNumber(moveTo + velocity, moveTo);
             if (!success) { return false; }
         }
-        /*if (field[moveTo.y, moveTo.x] == 2)
+
+        field[moveTo.y, moveTo.x] = field[moveFrom.y, moveTo.x];
+        /*if (field[moveTo.y, moveTo.x] )
         {
             //どの方向へ移動するかを算出
-            int velocity = moveTo - moveFrom;
+            Vector2Int velocity = moveTo - moveFrom;
             //プレイy－の移動先から、さらに先へ2(箱)を移動させる。
             //箱の移動処理。MoveNumberメソッド内でMoveNumberメソッドを呼び、処理が再起している。移動可不可をboolで記録
-            bool success = MoveNumber(2, moveTo, moveTo + velocity);
+            bool success = MoveNumber("Player", moveTo, moveTo + velocity);
             //もし箱が移動失敗したら、プレイヤーの移動も失敗
             if (!success) { return false; }
         }*/
 
-        Vector3 moveToPosition = new Vector3(moveTo.x - map.GetLength(1) / 2, -moveTo.y + map.GetLength(0) / 2, 0);
-        field[moveFrom.y, moveFrom.x].GetComponent<Move>().moveTo(moveToPosition);
+        Vector3 MoveToPosition = new Vector3(moveTo.x, map.GetLength(0) - moveTo.y, 0);
+        field[moveFrom.y, moveFrom.x].GetComponent<Move>().moveTo(MoveToPosition);
+       // Vector3 moveToPosition = new Vector3(moveTo.x - map.GetLength(1) / 2, -moveTo.y + map.GetLength(0) / 2, 0);
+       // field[moveFrom.y, moveFrom.x].GetComponent<Move>().moveTo(moveToPosition);
 
         //GameObjectの座標(position)を移動させてからインデックスの入れ替え
-                    field[moveTo.y, moveTo.x] = field[moveFrom.y, moveFrom.x];
-                    field[moveFrom.y, moveFrom.x].transform.position = new Vector3(moveTo.x, map.GetLength(0) - moveTo.y, 0);
-                    field[moveFrom.y, moveFrom.x] = null;
+        /*field[moveTo.y, moveTo.x] = field[moveFrom.y, moveFrom.x];
+        field[moveFrom.y, moveFrom.x].transform.position = new Vector3(moveTo.x, map.GetLength(0) - moveTo.y, 0);*/
+        field[moveFrom.y, moveFrom.x] = null;
         return true;
     }
 
